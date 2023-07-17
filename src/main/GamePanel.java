@@ -1,6 +1,14 @@
+package main;
+
+import entity.Enemy;
+import entity.Entity;
+import entity.Player;
+import entity.Projectile;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -13,11 +21,16 @@ public class GamePanel extends JPanel implements Runnable{
 //    final int SCREEN_WIDTH = TILE_SIZE * MAX_SCREEN_COLUMN;
 //    final int SCREEN_HEIGHT = TILE_SIZE * MAX_SCREEN_ROW;
 
+    int FPS = 60;
 
-    JPanel gameScreen;
-    public boolean gameScreenIsFocused = false;
+    public KeyHandler keyH = new KeyHandler();
     Thread gameThread;
-    public char direction = 'U';
+    Player player = new Player(this, keyH);
+    public ArrayList<Projectile> projectileList = new ArrayList<>();
+    public ArrayList<Enemy> enemyList = new ArrayList<>();
+
+
+//    Set player's default position
     public GamePanel() {
 
 //        Screen settings youtube tutorial
@@ -26,35 +39,8 @@ public class GamePanel extends JPanel implements Runnable{
 
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
-
-
-        gameScreen = new JPanel();
-        Main.addKeyActions(gameScreen, "LEFT", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (gameScreenIsFocused)
-                    direction = 'L';
-            }
-        });
-        Main.addKeyActions(gameScreen, "RIGHT", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (gameScreenIsFocused)
-                    direction = 'R';
-            }
-        });
-        Main.addKeyActions(gameScreen, "SPACE", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (gameScreenIsFocused) {
-//                    Something happens
-//                    Shooting
-
-                }
-            }
-        });
-
-
+        this.addKeyListener(keyH);
+        this.setFocusable(true);
     }
 
 
@@ -65,24 +51,58 @@ public class GamePanel extends JPanel implements Runnable{
 
     @Override
     public void run() {
+        double drawInterval = 1000000000/FPS;
+        double nextDrawTime = System.nanoTime() + drawInterval;
+
         while(gameThread != null) {
-//            System.out.println("Game Thread is running!");
             update();
             repaint();
+            try {
+                double remainingTime = nextDrawTime - System.nanoTime();
+                remainingTime = remainingTime/1000000;
+
+                if(remainingTime < 0) {
+                    remainingTime = 0;
+                }
+
+                Thread.sleep((long) remainingTime);
+
+                nextDrawTime += drawInterval;
+
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
     public void update() {
 
+        player.update();
+
+        for (Projectile projectile : projectileList) {
+            if (projectile != null) {
+                projectile.update();
+            }
+        }
+
+        for (Enemy enemy : enemyList) {
+            if (enemy != null) {
+                enemy.update();
+            }
+        }
     }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D) g;
+        player.draw(g2);
 
-        g2.setColor(Color.white);
+        for (int i = 0; i < projectileList.size(); i++) {
+            if(projectileList.get(i) != null) {
+                projectileList.get(i).draw(g2);
+            }
+        }
 
-        g2.fillRect(100,100,48,48);
 
         g2.dispose();
     }
