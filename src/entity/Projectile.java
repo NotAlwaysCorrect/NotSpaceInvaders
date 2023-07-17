@@ -10,13 +10,11 @@ import java.util.Objects;
 
 public class Projectile extends Entity{
     GamePanel gp;
-
     public Projectile(GamePanel gp) {
         speed = 10;
         this.gp = gp;
         getProjectileImage();
     }
-
     public void getProjectileImage() {
         try {
             projectileImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/images/Projectile.png")));

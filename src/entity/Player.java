@@ -49,11 +49,15 @@ public class Player extends Entity{
         }
 
         if(gp.keyH.shotKeyPressed && fireRateFrameCount >= fireRate) {
+            long timeA = System.currentTimeMillis();
+
             projectile = new Projectile(gp);
             projectile.set(this.x,this.y);
-            System.out.println("X: " + this.x + ", Y: " + this.y);
             gp.projectileList.add(projectile);
             fireRateFrameCount = 0;
+
+            long timeB = System.currentTimeMillis();
+            System.out.println(timeB - timeA);
         }
 
         fireRateFrameCount++;

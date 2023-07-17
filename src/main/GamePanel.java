@@ -7,7 +7,6 @@ import entity.Projectile;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 public class GamePanel extends JPanel implements Runnable{
@@ -28,6 +27,11 @@ public class GamePanel extends JPanel implements Runnable{
     Player player = new Player(this, keyH);
     public ArrayList<Projectile> projectileList = new ArrayList<>();
     public ArrayList<Enemy> enemyList = new ArrayList<>();
+    Enemy enemy;
+    int enemySpawnFrameRate = 40;
+    int getEnemySpawnFrameRateCount = 0;
+    int spawnCount = 0;
+
 
 
 //    Set player's default position
@@ -35,7 +39,6 @@ public class GamePanel extends JPanel implements Runnable{
 
 //        Screen settings youtube tutorial
 //        this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
-
 
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
@@ -81,6 +84,9 @@ public class GamePanel extends JPanel implements Runnable{
         for (Projectile projectile : projectileList) {
             if (projectile != null) {
                 projectile.update();
+                if (projectile.y < -24) {
+                    projectile = null;
+                }
             }
         }
 
@@ -89,6 +95,14 @@ public class GamePanel extends JPanel implements Runnable{
                 enemy.update();
             }
         }
+
+        if (getEnemySpawnFrameRateCount >= enemySpawnFrameRate && spawnCount < 10) {
+            spawnEnemies();
+            getEnemySpawnFrameRateCount = 0;
+            spawnCount++;
+        }
+
+        getEnemySpawnFrameRateCount++;
     }
 
     public void paintComponent(Graphics g) {
@@ -97,13 +111,27 @@ public class GamePanel extends JPanel implements Runnable{
         Graphics2D g2 = (Graphics2D) g;
         player.draw(g2);
 
-        for (int i = 0; i < projectileList.size(); i++) {
-            if(projectileList.get(i) != null) {
-                projectileList.get(i).draw(g2);
+        for (Projectile projectile : projectileList) {
+            if (projectile != null) {
+                projectile.draw(g2);
             }
         }
 
+        for (Enemy enemy : enemyList) {
+            if (enemy != null) {
+                enemy.draw(g2);
+            }
+        }
 
         g2.dispose();
     }
+
+
+    public void spawnEnemies() {
+        enemy = new Enemy(this);
+        enemy.set(500,-48);
+        enemyList.add(enemy);
+    }
+
+
 }
