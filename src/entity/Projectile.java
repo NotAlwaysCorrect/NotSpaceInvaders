@@ -25,14 +25,20 @@ public class Projectile extends Entity{
     public void set(int worldX, int worldY) {
         x = worldX;
         y = worldY;
+
+        hurtboxWidth = 12;
+        hurtboxHeight = 48;
     }
     public void update() {
         y -= speed;
+//        if (y <= -24) {
+//            gp.this = null;
+//        }
     }
 
     public void draw(Graphics2D g2) {
         BufferedImage image = projectileImage;
-        g2.drawImage(image,x,y,48,48, null);
+        g2.drawImage(image,x,y,12,48, null);
     }
 
 }

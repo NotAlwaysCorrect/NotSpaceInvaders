@@ -81,11 +81,21 @@ public class GamePanel extends JPanel implements Runnable{
 
         player.update();
 
-        for (Projectile projectile : projectileList) {
-            if (projectile != null) {
-                projectile.update();
-                if (projectile.y < -24) {
-                    projectile = null;
+        for (int i = 0; i < projectileList.size(); i++) {
+            if (projectileList.get(i) != null) {
+                projectileList.get(i).update();
+                boolean hitEnemy = false;
+                for (int j = 0; j<enemyList.size(); j++) {
+                    if (projectileList.get(i).x - enemyList.get(j).x <= 48 && enemyList.get(j).x - projectileList.get(i).x <= 12 && projectileList.get(i).y - enemyList.get(j).y <= 48 && enemyList.get(j).y - projectileList.get(i).y <= 48) {
+                        hitEnemy = true;
+                        enemyList.remove(j);
+                        break;
+                    }
+                }
+
+
+                if ((projectileList.get(i) != null && projectileList.get(i).y < -24) || hitEnemy) {
+                    projectileList.remove(i);
                 }
             }
         }

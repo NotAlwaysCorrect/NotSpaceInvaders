@@ -71,10 +71,7 @@ public class Main implements Runnable{
 
         gamePanel.startGameThread();
 
-
     }
-
-
 
     public static void addKeyActions(JComponent c, String key, final Action action) {
         c.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(key), key);

@@ -10,6 +10,7 @@ import java.util.Objects;
 
 public class Enemy extends Entity{
     GamePanel gp;
+    public char direction;
     public Enemy(GamePanel gp) {
         speed = 5;
         this.gp = gp;
@@ -24,12 +25,27 @@ public class Enemy extends Entity{
     }
 
     public void set(int worldX, int worldY) {
+        direction = 'r';
         x = worldX;
         y = worldY;
+
+        hurtboxWidth = 48;
+        hurtboxHeight = 48;
     }
     public void update() {
-        y += speed/2;
-        x += speed;
+        if (x >=1000) {
+            direction = 'l';
+        } else if (x <= 300) {
+            direction = 'r';
+        }
+
+        y += speed / 2;
+
+        if (direction == 'r') {
+            x += speed;
+        } else {
+            x -= speed;
+        }
     }
     public void draw(Graphics2D g2) {
         BufferedImage image = enemyImage;
